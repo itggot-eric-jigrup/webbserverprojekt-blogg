@@ -9,3 +9,6 @@ require 'SQLite3'
     get('/login') do
         slim(:login)
     end 
+
+    post('/login') do
+    end 
