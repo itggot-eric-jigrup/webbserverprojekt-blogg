@@ -3,6 +3,8 @@ require 'slim'
 require 'SQLite3'
 require 'bcrypt'
 
+enable :sessions
+
     get('/') do
         slim(:index)
     end
@@ -13,7 +15,7 @@ require 'bcrypt'
 
     post('/login') do
         db = SQLite3::Database.new("db/user.db")
-        db.result_as_hash = true
+        db.results_as_hash = true
 
         if BCrypt::Password.new == password
             redirect('/inloggad')
@@ -28,11 +30,13 @@ require 'bcrypt'
 
     post('/registrering') do 
         db = SQLite3::Database.new("db/user.db")
-        db.result_as_hash = true
+        db.results_as_hash = true
 
         name = params["name"]
         password = BCrypt::Password.create(params["password"])
 
-        db.execute("INSERT INTO user (name,password) VALUES (?,?)",name,password)
+        db.execute("INSERT INTO User (name,password) VALUES (?,?)",name,password)
+        db.execute("SELECT id FROM User WHERE name = name",name)
+        session[:id] = true
         redirect('/') 
     end
