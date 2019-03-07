@@ -2,6 +2,7 @@ require 'sinatra'
 require 'slim'
 require 'SQLite3'
 require 'bcrypt'
+require 'byebug'
 
 enable :sessions
 
@@ -14,10 +15,18 @@ enable :sessions
     end 
 
     post('/login') do
+        username = params["name"]
+        pswrd = params["password"]
+
         db = SQLite3::Database.new("db/user.db")
         db.results_as_hash = true
 
-        if BCrypt::Password.new == password
+        password = db.execute("SELECT password FROM User WHERE name = ?", username)
+
+        password = password.first["password"]
+
+        p"PASSWORD:#{password}"
+        if BCrypt::Password.new(password) == pswrd
             redirect('/inloggad')
         else
             redirect('/login')
@@ -31,12 +40,26 @@ enable :sessions
     post('/registrering') do 
         db = SQLite3::Database.new("db/user.db")
         db.results_as_hash = true
-
         name = params["name"]
         password = BCrypt::Password.create(params["password"])
 
         db.execute("INSERT INTO User (name,password) VALUES (?,?)",name,password)
-        db.execute("SELECT id FROM User WHERE name = name",name)
-        session[:id] = true
+        result = db.execute("SELECT id FROM User WHERE name = ?",name)
+        
+        p result
+        session[:id] = result.first.first
         redirect('/') 
+    end
+
+    get('/secure') do
+        p session[:id]
+        if session[:id] != nil
+            return "You got in"
+        else
+            redirect('/login')
+        end
+    end
+
+    get('/inloggad') do 
+        slim(:inloggad)
     end
