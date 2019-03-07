@@ -68,3 +68,12 @@ enable :sessions
         db = SQLite3::Database.new("db/user.db")
         db.results_as_hash = true
     end
+
+    get('/profil') do
+        slim(:profil)
+    end
+
+    post('/profil') do
+        db = SQLite3::Database.new("db/user.db")
+        db.results_as_hash = true
+    end
