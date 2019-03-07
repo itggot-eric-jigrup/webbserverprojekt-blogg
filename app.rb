@@ -63,3 +63,8 @@ enable :sessions
     get('/inloggad') do 
         slim(:inloggad)
     end
+
+    post('/inloggad') do
+        db = SQLite3::Database.new("db/user.db")
+        db.results_as_hash = true
+    end
