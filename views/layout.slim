@@ -8,5 +8,9 @@ html lang="en"
     body
         header
             h1 Bloggog
+            - if session[:username]
+                p Du är inloggad som #{session[:username]}
+            - else
+                p Du är inte inloggad
         main 
             == yield 

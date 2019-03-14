@@ -27,6 +27,7 @@ enable :sessions
 
         p"PASSWORD:#{password}"
         if BCrypt::Password.new(password) == pswrd
+            session[:username] = username
             redirect('/inloggad')
         else
             redirect('/login')
